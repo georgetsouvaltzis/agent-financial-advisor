@@ -7,12 +7,15 @@ from langchain_core.messages import HumanMessage, AIMessageChunk
 from application.workflow.graph import create_workflow_graph
 from langchain_core.runnables import RunnableConfig
 from langgraph.types import Command
+from opik.integrations.langchain import OpikTracer
 
 async def main():
     graph = create_workflow_graph()
-    config = RunnableConfig(configurable={"thread_id": 1})
-    human_message = [HumanMessage("I want to pruchase a house.")]
+    human_message = [HumanMessage("I want to purchase a nice car.")]
     state = SharedState(messages=human_message)
+
+    opik_tracer = OpikTracer(graph=graph.get_graph(xray=True))
+    config = RunnableConfig(configurable={"thread_id": "1"}, callbacks=[opik_tracer])
 
     await graph.ainvoke(state, config)
 

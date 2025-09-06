@@ -1,6 +1,6 @@
 import json
-from src.application.agents.base_agent import BaseAgent
-from src.application.shared_state import SharedState
+from application.agents.base_agent import BaseAgent
+from application.shared_state import SharedState
 from langchain_core.messages import SystemMessage, HumanMessage
 
 class InvestmentAgent(BaseAgent):
@@ -37,11 +37,11 @@ class InvestmentAgent(BaseAgent):
         """)
 
         llm_input = {
-            "profile": state.user_profile.model_dump(),
+            "profile": state["user_profile"].model_dump(),
             "risk_assesment": {
-                "disposable_income": state.disposable_income,
-                "risk_flags": state.risk_flags,
-                "risk_report": state.risk_report
+                "disposable_income": state["disposable_income"],
+                "risk_flags": state["risk_flags"],
+                "risk_report": state["risk_report"]
             }
         }
 
@@ -49,7 +49,8 @@ class InvestmentAgent(BaseAgent):
 
         res = self._llm.invoke([system_prompt, human_message])
         extracted_json = json.loads(res.content)
-        
-        return SharedState(**state, recommender_agent_summary=extracted_json)
+        return {
+            "recommender_agent_summary": extracted_json
+        }
 
 

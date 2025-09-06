@@ -1,7 +1,6 @@
-from src.domain.base_model import CustomBaseModel
-from pydantic import Field
+from pydantic import Field, BaseModel
 
 
-class Goal(CustomBaseModel):
+class Goal(BaseModel):
     name: str = Field(description="Name of the goal that user is trying to achieve")
     amount: float = Field(description="Amount that user is trying to save for the given goal")

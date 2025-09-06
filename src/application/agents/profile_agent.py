@@ -1,10 +1,10 @@
 import json
 from pydantic import ValidationError
 from langchain_core.messages import HumanMessage, SystemMessage
-from src.application.agents.base_agent import BaseAgent
-from src.application.shared_state import SharedState
-from src.application.utils import extract_content_from_tags
-from src.domain.user_profile import UserProfile
+from application.agents.base_agent import BaseAgent
+from application.shared_state import SharedState
+from application.utils import extract_content_from_tags
+from domain.user_profile import UserProfile
 
 
 class ProfileAgent(BaseAgent):
@@ -38,13 +38,16 @@ class ProfileAgent(BaseAgent):
         "goals: [{"name": "vacation", "amount": 2000}]
     }
     """
-        system_message = SystemMessage(prompt_template % UserProfile.get_json_schema())
+        system_message = SystemMessage(prompt_template % UserProfile.model_json_schema()["properties"])
 
         try:
-            llm_response = self._llm.invoke([system_message] + state.messages)
+            llm_response = self._llm.invoke([system_message] + state["messages"])
             extracted_content = extract_content_from_tags("question_to_ask", llm_response.content)
             if extracted_content is not None:
-                return SharedState(**state, messages=[] + [llm_response], question_to_ask=extracted_content)
+                return {
+                    "messages": [llm_response],
+                    "question_to_ask": extracted_content
+                }
 
             extracted_content = extract_content_from_tags("generated_json", llm_response.content)
 
@@ -55,7 +58,11 @@ class ProfileAgent(BaseAgent):
         except ValidationError as e:
             print("validation error!")
             user_profile = None
-        
-        return SharedState(**state, question_to_ask=None, user_response=None, messages=[llm_response], user_profile=user_profile)
-            
+
+        return {
+            "question_to_ask": None,
+            "user_response": None,
+            "messages": [llm_response],
+            "user_profile": user_profile
+        }
 

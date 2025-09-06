@@ -1,11 +1,10 @@
-from src.domain.base_model import CustomBaseModel
-from pydantic import Field
+from pydantic import Field, BaseModel
 from typing import Literal
 
-from src.domain.goal import Goal
+from domain.goal import Goal
 
 
-class UserProfile(CustomBaseModel):
+class UserProfile(BaseModel):
     income: float = Field(description="monthly income")
     expenses: float = Field(description="monthly expenses")
     tolerance: Literal["low", "medium", "high"] = Field(description="how risk tolerant user is.")

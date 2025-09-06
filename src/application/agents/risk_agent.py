@@ -1,6 +1,6 @@
 import json
-from src.application.agents.base_agent import BaseAgent
-from src.application.shared_state import SharedState
+from application.agents.base_agent import BaseAgent
+from application.shared_state import SharedState
 from langchain_core.messages import SystemMessage, HumanMessage
 
 
@@ -23,7 +23,7 @@ class RiskCheckAgent(BaseAgent):
         - Do not invent numbers. Rely only on provided profile and calculations
         - Keep your output in under 150-200 words.""")
         
-        profile = state.user_profile
+        profile = state["user_profile"]
         risk_flags = []
         disposable_income = profile.income - profile.expenses
 
@@ -53,5 +53,11 @@ class RiskCheckAgent(BaseAgent):
         human_message = HumanMessage(json.dumps(llm_input))
 
         res = self._llm.invoke([system_message, human_message])
-        
-        return SharedState(**state, messages=[res], risk_report=res.content, risk_flags=risk_flags, disposable_income=disposable_income)
+
+        return {
+            "messages": [res],
+            "risk_report": res.content,
+            "risk_flags": risk_flags,
+            "disposable_income": disposable_income
+        }
+

@@ -1,7 +1,7 @@
 import json
 from langchain_core.messages import SystemMessage, HumanMessage
-from src.application.agents.base_agent import BaseAgent
-from src.application.shared_state import SharedState
+from application.agents.base_agent import BaseAgent
+from application.shared_state import SharedState
 
 
 class PlanAgent(BaseAgent):
@@ -38,18 +38,17 @@ class PlanAgent(BaseAgent):
         """)
 
         llm_input = {
-            "profile": state.user_profile.model_dump(),
+            "profile": state["user_profile"].model_dump(),
             "risk_assesment": {
-                "disposable_income": state.disposable_income,
-                "risk_flags": state.risk_flags,
-                "risk_report": state.risk_report
+                "disposable_income": state["disposable_income"],
+                "risk_flags": state["risk_flags"],
+                "risk_report": state["risk_report"]
             }
         }
-
 
         human_message = HumanMessage(json.dumps(llm_input))
 
         res = self._llm.invoke([system_message, human_message])
-        action_plan_agent_summary = json.loads(res.content)
-
-        return SharedState(**state, action_plan_agent_summary=action_plan_agent_summary)
+        return {
+            "action_plan_agent_summary": json.loads(res.content),
+        }

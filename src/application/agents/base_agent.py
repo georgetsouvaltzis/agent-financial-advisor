@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 
 from langchain_groq import ChatGroq
 
-from src.application.shared_state import SharedState
+from application.shared_state import SharedState
 
 class BaseAgent(ABC):
     """

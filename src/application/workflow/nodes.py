@@ -1,11 +1,7 @@
-import json
 from langchain_core.messages import HumanMessage, SystemMessage, AIMessage
-from pydantic import ValidationError
 from typing import Literal
-from src.application.agents.profile_agent import ProfileAgent
-from src.application.shared_state import SharedState
-from src.application.utils import extract_content_from_tags
-from src.domain.user_profile import UserProfile
+from application.agents.profile_agent import ProfileAgent
+from application.shared_state import SharedState
 from ..agents.investment_agent import InvestmentAgent
 from ..agents.plan_agent import PlanAgent
 from ..agents.risk_agent import RiskCheckAgent
@@ -25,9 +21,9 @@ def collect_user_profile(state: SharedState) -> SharedState:
 
 
 def ask_user_to_clarify(state: SharedState) -> Command[Literal["collect_user_profile"]]:
-    user_response = interrupt(f"\n{state.question_to_ask}")
+    user_response = interrupt(f"\n{state["question_to_ask"]}")
 
-    return Command(goto="collect_user_profile", update={"messages": [AIMessage(state.question_to_ask), HumanMessage(user_response)]})
+    return Command(goto="collect_user_profile", update={"messages": [AIMessage(state["question_to_ask"]), HumanMessage(user_response)]})
 
 
 

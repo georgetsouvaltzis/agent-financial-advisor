@@ -1,8 +1,8 @@
 import json
-from src.application.agents.base_agent import BaseAgent
+from application.agents.base_agent import BaseAgent
 from langchain_core.messages import SystemMessage, HumanMessage
 
-from src.application.shared_state import SharedState
+from application.shared_state import SharedState
 
 class SummarizerAgent(BaseAgent):
     def run(self, state: SharedState) -> SharedState:
@@ -29,19 +29,21 @@ class SummarizerAgent(BaseAgent):
         """) 
 
         llm_input = {
-            "profile": state.user_profile.model_dump(),
-            "risk_report": state.risk_report,
-            "risk_flags": state.risk_flags,
-            "disposable_income": state.disposable_income,
-            "investment_plan": json.dumps(state.recommender_agent_summary),
-            "action_steps_and_summary": json.dumps(state.action_plan_agent_summary)
+            "profile": state["user_profile"].model_dump(),
+            "risk_report": state["risk_report"],
+            "risk_flags": state["risk_flags"],
+            "disposable_income": state["disposable_income"],
+            "investment_plan": json.dumps(state["recommender_agent_summary"]),
+            "action_steps_and_summary": json.dumps(state["action_plan_agent_summary"])
         }    
 
         human_message = HumanMessage(json.dumps(llm_input))
 
         res = self._llm.invoke([system_message, human_message])
 
-        return SharedState(**state, messages=[res])
+        return {
+            "messages": [res]
+        }
 
         
 

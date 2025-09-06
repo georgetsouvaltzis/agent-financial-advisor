@@ -5,7 +5,7 @@ from application.shared_state import SharedState
 
 
 class PlanAgent(BaseAgent):
-    def run(self, state: SharedState) -> SharedState:
+    async def run(self, state: SharedState) -> SharedState:
         system_message = SystemMessage("""
         You are a professional financial advisor. Your job is to create an investment strategy for a user based on their financial profile and risk assessment.
         1. You will receive user's profile(income, monthly expenses, risk tolerance, goals, preferences)
@@ -48,7 +48,7 @@ class PlanAgent(BaseAgent):
 
         human_message = HumanMessage(json.dumps(llm_input))
 
-        res = self._llm.invoke([system_message, human_message])
+        res = await self._llm.ainvoke([system_message, human_message])
         return {
             "action_plan_agent_summary": json.loads(res.content),
         }

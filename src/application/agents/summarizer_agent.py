@@ -5,7 +5,7 @@ from langchain_core.messages import SystemMessage, HumanMessage
 from application.shared_state import SharedState
 
 class SummarizerAgent(BaseAgent):
-    def run(self, state: SharedState) -> SharedState:
+    async def run(self, state: SharedState) -> SharedState:
         system_message = SystemMessage("""
         You are a professional financial assistant. Your task is to summarize a user's complete financial profile, risk assessment, investment recommendations, and action plan into a single, coherent report in plain, human-friendly language.
         You will receive:
@@ -39,7 +39,7 @@ class SummarizerAgent(BaseAgent):
 
         human_message = HumanMessage(json.dumps(llm_input))
 
-        res = self._llm.invoke([system_message, human_message])
+        res = await self._llm.ainvoke([system_message, human_message])
 
         return {
             "messages": [res]

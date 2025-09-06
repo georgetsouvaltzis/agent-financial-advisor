@@ -5,7 +5,7 @@ from langchain_core.messages import SystemMessage, HumanMessage
 
 
 class RiskCheckAgent(BaseAgent):
-    def run(self, state: SharedState) -> SharedState:
+    async def run(self, state: SharedState) -> SharedState:
         system_message = SystemMessage("""
         You are a financial risk assessment assistant.
         Your task is to review a user's financial profile and explain potential risks and feasability of their financial situation.
@@ -52,7 +52,7 @@ class RiskCheckAgent(BaseAgent):
 
         human_message = HumanMessage(json.dumps(llm_input))
 
-        res = self._llm.invoke([system_message, human_message])
+        res = await self._llm.ainvoke([system_message, human_message])
 
         return {
             "messages": [res],

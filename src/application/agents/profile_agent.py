@@ -8,7 +8,7 @@ from domain.user_profile import UserProfile
 
 
 class ProfileAgent(BaseAgent):
-    def run(self, state: SharedState) -> SharedState:
+    async def run(self, state: SharedState) -> SharedState:
         prompt_template = """
     You are a financial assistant. Your task is to extract a user's financial profile from their message, strictlyt following the provided JSON schema.
 
@@ -41,7 +41,7 @@ class ProfileAgent(BaseAgent):
         system_message = SystemMessage(prompt_template % UserProfile.model_json_schema()["properties"])
 
         try:
-            llm_response = self._llm.invoke([system_message] + state["messages"])
+            llm_response = await self._llm.ainvoke([system_message] + state["messages"])
             extracted_content = extract_content_from_tags("question_to_ask", llm_response.content)
             if extracted_content is not None:
                 return {

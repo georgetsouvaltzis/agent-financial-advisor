@@ -4,7 +4,7 @@ from application.shared_state import SharedState
 from langchain_core.messages import SystemMessage, HumanMessage
 
 class InvestmentAgent(BaseAgent):
-    def run(self, state: SharedState) -> SharedState:
+    async def run(self, state: SharedState) -> SharedState:
         system_prompt = SystemMessage("""
         You are a professional financial advisor. Your job is to create an investment strategy for a user based on their financial profile and risk assessment.
         1. You will receive user's profile(income, monthly expenses, risk tolerance, goals, preferences)
@@ -47,7 +47,7 @@ class InvestmentAgent(BaseAgent):
 
         human_message = HumanMessage(json.dumps(llm_input))
 
-        res = self._llm.invoke([system_prompt, human_message])
+        res = await self._llm.ainvoke([system_prompt, human_message])
         extracted_json = json.loads(res.content)
         return {
             "recommender_agent_summary": extracted_json

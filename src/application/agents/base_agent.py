@@ -15,6 +15,6 @@ class BaseAgent(ABC):
         self._llm = ChatGroq(model=model_name)
 
     @abstractmethod
-    def run(self, state: SharedState) -> SharedState:
+    async def run(self, state: SharedState) -> SharedState:
         pass
 

@@ -1,0 +1,2 @@
+## Note
+This project is a learning exercise in building AI agents for personal finance guidance. It demonstrates concepts such as user input handling, goal tracking, and recommendation logic. Important: This agent is for educational purposes only and should not be used for real-world financial decisions or day-to-day money management. Always consult a licensed financial professional for actual financial advice.
